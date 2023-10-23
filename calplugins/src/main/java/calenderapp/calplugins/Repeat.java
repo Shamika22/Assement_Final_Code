@@ -6,12 +6,14 @@ import calenderapp.utilities.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Repeat implements CalenderPlugginInterface {
 
-    CalenderAppAPI theAPI ;
-    Event theEvent;
+    CalenderAppAPI theAPI;
+    List<Event> theRepeatEventList = new ArrayList<>();
 
     @Override
     public void start(CalenderAppAPI theAPI) {
@@ -19,15 +21,18 @@ public class Repeat implements CalenderPlugginInterface {
     }
 
     @CreateRepeatEvents(title = "null")
-    public void makeEvents(String title){
-//        Event theNewEvent = new Event(title);
+    public void makeEvents(String title, LocalDate date, LocalTime time, int duration) {
 
-//        theEvent = theNewEvent;
+        LocalDate theRepeatEndDate = date.plusYears(1);
+        LocalDate theCurrentDate = date;
+//        creaging repeat events
+        while (theCurrentDate.isBefore(theRepeatEndDate)) {
+            Event event = new Event(title, theCurrentDate, time);
+            theRepeatEventList.add(event);
+            theCurrentDate = theCurrentDate.plusDays(duration);
 
-        theAPI.addEvent(theEvent);
+        }
+        theAPI.addEvent(theRepeatEventList);
     }
-
-
-
 
 }
