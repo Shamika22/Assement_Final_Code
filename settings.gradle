@@ -14,4 +14,7 @@ rootProject.name = 'CalenderApp'
 include('app', 'list', 'utilities')
 include 'calplugins'
 include 'api'
+include 'repeat_pluggin'
+include 'notify_pluggin'
+include 'notify_pluggin'
 

@@ -8,10 +8,18 @@ public class Event {
     private LocalTime startTime;
     private LocalDate startDate;
 
+    private int duration;
+
     public Event(String title , LocalDate date , LocalTime time) {
         this.title = title;
         this.startTime = time;
         this.startDate = date;
+    }
+    public Event(String title , LocalDate date , LocalTime time , int duration) {
+        this.title = title;
+        this.startTime = time;
+        this.startDate = date;
+        this.duration = duration;
     }
 
     public String getTitle() {

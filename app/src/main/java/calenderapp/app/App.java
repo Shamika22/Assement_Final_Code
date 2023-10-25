@@ -3,11 +3,10 @@
  */
 package calenderapp.app;
 
-import calenderapp.utilities.CreateRepeatEvents;
-import calenderapp.utilities.Event;
-import calenderapp.utilities.EventPrintObject;
-import calenderapp.utilities.TerminalGrid;
+import calenderapp.utilities.*;
 
+
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +30,23 @@ public class App {
         Scanner userIn = new Scanner(System.in);  // Create a Scanner object
         boolean quiteMain = false;
         List<Event> theEventList = new ArrayList<>();
+
+        PlugginLoader thePlugginLoader = new PlugginLoader();
+        thePlugginLoader.loadPluggins();
+
+//        try{
+//            InputStream inputStream = MyParser.class.getResourceAsStream("/" + "input.txt");
+//            MyParser theParser = new MyParser(inputStream);
+//            ParseObject theParsedObjectList = theParser.parse("input.txt");
+//
+//            System.out.println();
+//        }catch (Exception e){
+//            System.out.println(e);
+//        }
+
+
+
+
 
 //        Loading pluggins
         TempHardCodedCalendar temFile = new TempHardCodedCalendar();
@@ -81,7 +97,7 @@ public class App {
 
                 switch (mainMenueSelection) {
                     case 1: {
-                        handleCalenderMenue(userIn , theEventList);
+//                        handleCalenderMenue(userIn , theEventList);
                         break;
                     }
                     case 2: {

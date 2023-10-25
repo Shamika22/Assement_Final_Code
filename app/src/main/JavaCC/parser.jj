@@ -1,0 +1,186 @@
+// Hello world JavaCC grammar file.
+
+// Notes:
+// * To change the class name (MyParser), you can simply change it here, but the .java code will
+//   need to be updated accordingly.
+// * To change the *package* name, you also need to edit build.gradle.
+
+PARSER_BEGIN(MyParser)
+package calenderapp.app;
+import calenderapp.utilities.Event;
+import calenderapp.utilities.ParseObject;
+import java.io.*;
+import java.time.format.DateTimeFormatter;
+import java.time.*;
+import java.util.HashMap;
+import java.util.List;
+
+public class MyParser
+{
+
+    private static ParseObject theParseList = new ParseObject();
+
+    public ParseObject parse(String filename) throws IOException,ParseException
+    {
+
+            String theVal = "THis is from the parser val";
+            parserController();
+
+            return theParseList;
+    }
+
+}
+PARSER_END(MyParser)
+
+SKIP: { " " | "\n" | "\r" }
+
+TOKEN: {
+    < HELLO: "hello" > |
+    < WORLD: "world" > |
+    < EVENT: "event"> |
+    < DATE: "20"(["0"-"9"])* "-" ["0"-"9"] ["0"-"9"] "-" ["0"-"9"] ["0"-"9"] > |
+    < INTEGER: (["0"-"9"])+ > |
+    < TIME: (["0"-"2"]["0"-"9"])":"(["0"-"5"]["0"-"9"])":"(["0"-"5"]["0"-"9"]) >|
+    < STRING: "\"" (~["\""])* "\"" > |
+    < ALLDAY: "all-day"> |
+    < TITLEKEY: "title"> |
+    < DATEKEY: "StartDate"> |
+    < TIMEKEY: "StartTime"> |
+    < DURATIONKEY: "duration"> |
+    < REPEATKEY: "repeat"> |
+    < PLUGIN: "plugin"> |
+    < LBRACE: "{" > |
+    < RBRACE: "}" > |
+    <TEXTKEY:"text">|
+    < PLUGINID: (["a"-"z", "A"-"Z", "."])+ > |
+    < COMMA: ","> |
+    < COLON: ":">
+
+
+}
+
+void parserController() :
+{
+}
+{
+    (event() | hello() | plugin())* <EOF>
+}
+
+void hello():
+{
+}
+{
+    <HELLO> <WORLD>
+    {
+        System.out.println("Successful parse! The input is a valid 'hello world' statement.");
+
+    }
+}
+
+void plugin():
+{
+    Token pluginToken;
+    Token eventTitle ;
+    Token startDate ;
+    Token startTime ;
+    Token duration ;
+    Token repeat ;
+    String pluginStringVal;
+    String eventTitleVal ;
+    String startDateVal ;
+    String startTimeVal ;
+    String durationVal ;
+    String repeatVal ;
+
+}
+{
+    <PLUGIN> pluginToken = <PLUGINID> <LBRACE> (
+        (<TEXTKEY> ":" eventTitle = <STRING> "}"
+            {
+                 eventTitleVal = eventTitle.image;
+
+                 System.out.println("Plugin Notify Identified" + eventTitleVal);
+            }
+        )
+        |
+        (<TITLEKEY> ":" eventTitle = <STRING> "," "StartDate" ":" startDate = <DATE> "," (
+            (
+                "StartTime" ":" startTime = <TIME> "," "duration" ":" duration=<INTEGER> "," "repeat" ":" repeat=<INTEGER> "}"
+                {
+                    pluginStringVal = pluginToken.image;
+                    eventTitleVal = eventTitle.image;
+                    startTimeVal = startTime.image;
+                    startDateVal = startDate.image;
+                    durationVal = duration.image;
+                    repeatVal = repeat.image;
+
+                    System.out.println("Plugin Identified: "+pluginStringVal+eventTitleVal+startDateVal+startTimeVal+durationVal+repeatVal);
+                }
+            )
+            |
+            (
+                "repeat" ":" repeat=<INTEGER> "}"
+                {
+                    pluginStringVal = pluginToken.image;
+                    eventTitleVal = eventTitle.image;
+                    repeatVal = repeat.image;
+
+                    System.out.println("Plugin Identified: "+pluginStringVal+eventTitleVal+repeatVal+" All-day event");
+                }
+            )
+        )
+      )
+    )
+
+
+}
+
+void event() :
+{
+    Token dateToken;
+    Token timeToken;
+    Token titleToken;
+    Token durationToken;
+    String dateString;
+    String timeString;
+    String titleString;
+    String durationString;
+    DateTimeFormatter dateFormatter;
+    DateTimeFormatter timeFormatter;
+    LocalDate localDate;
+    LocalTime localTime;
+    int duration;
+}
+{
+    <EVENT> dateToken = <DATE> (
+        (
+            timeToken = <TIME> durationToken = <INTEGER> titleToken = <STRING>
+            {
+    dateString = dateToken.image;
+    timeString = timeToken.image;
+    titleString = titleToken.image;
+    dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    localDate = LocalDate.parse(dateString, dateFormatter);
+    localTime = LocalTime.parse(timeString, timeFormatter);
+    durationString = durationToken.image;
+    duration = Integer.parseInt(durationString);
+    System.out.println("Event: "+titleString+" Date: "+localDate+" Time: "+localTime+" Duration: "+duration);
+    Event theEvent = new Event(titleString,localDate,localTime,duration);
+    theParseList.addEvent(theEvent);
+
+}
+        )
+        |
+        (
+            <ALLDAY> titleToken = <STRING>
+            {
+                dateString = dateToken.image;
+                titleString = titleToken.image;
+                dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                localDate = LocalDate.parse(dateString, dateFormatter);
+                System.out.println("All-Day Event: "+titleString+" Date: "+localDate);
+            }
+        )
+    )
+}

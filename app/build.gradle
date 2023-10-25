@@ -4,6 +4,7 @@
 
 plugins {
     id 'calenderapp.java-application-conventions'
+    id 'com.intershop.gradle.javacc' version '4.0.1'
 }
 
 dependencies {
@@ -11,6 +12,7 @@ dependencies {
     implementation project(':utilities')
     implementation project(':api')
     implementation project (':calplugins')
+
 }
 
 application {
@@ -21,5 +23,15 @@ application {
 
 run {
     standardInput = System.in
+}
+
+javacc {
+    configs {
+        createmyparser {
+            inputFile = file('src/main/JavaCC/parser.jj')
+            packageName = 'calenderapp.app'
+            //lookahead = '2'
+        }
+    }
 }
 

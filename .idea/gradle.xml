@@ -16,6 +16,8 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/calplugins" />
             <option value="$PROJECT_DIR$/list" />
+            <option value="$PROJECT_DIR$/notify_pluggin" />
+            <option value="$PROJECT_DIR$/repeat_pluggin" />
             <option value="$PROJECT_DIR$/utilities" />
           </set>
         </option>
