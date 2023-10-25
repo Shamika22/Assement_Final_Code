@@ -10,16 +10,19 @@ public class Event {
 
     private int duration;
 
-    public Event(String title , LocalDate date , LocalTime time) {
+    private boolean allDay;
+
+    public Event(String title ,  LocalDate date){
         this.title = title;
-        this.startTime = time;
         this.startDate = date;
+        this.allDay = true;
     }
     public Event(String title , LocalDate date , LocalTime time , int duration) {
         this.title = title;
         this.startTime = time;
         this.startDate = date;
         this.duration = duration;
+        this.allDay = false;
     }
 
     public String getTitle() {
@@ -44,6 +47,14 @@ public class Event {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public boolean isAllDay() {
+        return allDay;
+    }
+
+    public void setAllDay(boolean allDay) {
+        this.allDay = allDay;
     }
 
     @Override

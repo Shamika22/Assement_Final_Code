@@ -23,15 +23,15 @@ public class Repeat implements CalenderPlugginInterface {
     @CreateRepeatEvents(title = "null")
     public void makeEvents(String title, LocalDate date, LocalTime time, int duration) {
 
-        LocalDate theRepeatEndDate = date.plusYears(1);
-        LocalDate theCurrentDate = date;
-//        creaging repeat events
-        while (theCurrentDate.isBefore(theRepeatEndDate)) {
-            Event event = new Event(title, theCurrentDate, time);
-            theRepeatEventList.add(event);
-            theCurrentDate = theCurrentDate.plusDays(duration);
-
-        }
+//        LocalDate theRepeatEndDate = date.plusYears(1);
+//        LocalDate theCurrentDate = date;
+////        creaging repeat events
+//        while (theCurrentDate.isBefore(theRepeatEndDate)) {
+//            Event event = new Event(title, theCurrentDate, time);
+//            theRepeatEventList.add(event);
+//            theCurrentDate = theCurrentDate.plusDays(duration);
+//
+//        }
         theAPI.addEvent(theRepeatEventList);
     }
 

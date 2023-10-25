@@ -1,12 +1,12 @@
 event 2023-10-29 15:00:00 90 "Meeting 1"
 hello world
-plugin calendarapp.repeat.Repeat
+plugin calenderapp.repeat.Repeat
 {
     title: "Repeat Plugin all day event",
     StartDate: 2023-10-30,
     repeat: 5
 }
-plugin calendarapp.repeat.Repeat
+plugin calenderapp.repeat.Repeat
 {
     title: "This is a repeat event",
     StartDate: 2023-10-30,
@@ -14,17 +14,17 @@ plugin calendarapp.repeat.Repeat
     duration: 50,
     repeat: 5
 }
-event 2023-11-01 all-day "Meeting 3"
 event 2023-10-31 08:30:45 45 "Meeting 2"
-event 2023-10-25
-    all-day "Christmas Day" event 2023-10-25
-                                 all-day "Poya Day"
-plugin calendarapp.pluginNotify.Notify
+event 2023-10-25 all-day "Christmas Day"
+event 2023-10-25 all-day "Poya Day"
+event 2023-10-25 all-day "Full day Festival"
+
+plugin calenderapp.pluginNotify.Notify
 {
     text: "Notify Plugin"
 }
 
-event 2023-10-31 08:30:45 45 "Meeting 2"
-event 2023-10-31 08:30:45 45 "Meeting 2"
-event 2023-10-31 08:30:45 45 "Meeting 2"
+event 2023-10-31 08:30:45 45 "Meeting 4"
+event 2023-10-31 08:30:45 45 "Meeting 5"
+event 2023-10-31 08:30:45 45 "Meeting 6"
 

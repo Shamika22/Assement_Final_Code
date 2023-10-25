@@ -27,12 +27,20 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) {
 //      VARIABLES AND CONSTS
-        Scanner userIn = new Scanner(System.in);  // Create a Scanner object
+        int column = 7;
+        int row = 26;
         boolean quiteMain = false;
-        List<Event> theEventList = new ArrayList<>();
+        Scanner userIn = new Scanner(System.in);  // Create a Scanner object
+        List<Event> theEventList = new ArrayList<>(); // This is the main event list
 
+//        READ THE PARSER AND LOAD THE INITIAL EVENT DATA
         PlugginLoader thePlugginLoader = new PlugginLoader();
-        thePlugginLoader.loadPluggins();
+        thePlugginLoader.getEvents();
+
+//        INTITIAZE THE PLUGGINS
+
+
+
 
 //        try{
 //            InputStream inputStream = MyParser.class.getResourceAsStream("/" + "input.txt");
@@ -49,44 +57,8 @@ public class App {
 
 
 //        Loading pluggins
-        TempHardCodedCalendar temFile = new TempHardCodedCalendar();
-        String[] pluginNames = temFile.getPluginNames();
+//
 
-//        Intialize the Calender API
-        CalenderAppAPI theMainAPI = new CalenderAppAPI() {
-
-            @Override
-            public void printVal(String theVal) {
-
-            }
-
-            @Override
-            public void addEvent(List<Event> theEventLisIn) {
-                theEventList.addAll(theEventLisIn);
-            }
-        };
-
-
-        try {
-            Class<?> theRunTimeClass = Class.forName("calenderapp.calplugins.Repeat");
-            CalenderPlugginInterface thePluggin = (CalenderPlugginInterface) theRunTimeClass.getConstructor().newInstance();
-
-            thePluggin.start(theMainAPI);
-
-            for (Method method : theRunTimeClass.getMethods()) {
-                Annotation annotation = method.getAnnotation(CreateRepeatEvents.class);
-                if (annotation != null) {
-                    method.invoke(thePluggin, "THis is the main event", LocalDate.now(), LocalTime.now(), 2);
-                }
-            }
-
-
-
-
-        } catch (Exception e) {
-//            TODO:The exeption need to be defined not generic
-            throw new RuntimeException(e);
-        }
 
 
         do {
@@ -97,7 +69,7 @@ public class App {
 
                 switch (mainMenueSelection) {
                     case 1: {
-//                        handleCalenderMenue(userIn , theEventList);
+                        handleCalenderMenue(userIn , theEventList , column , row);
                         break;
                     }
                     case 2: {
@@ -133,14 +105,14 @@ public class App {
     }
 
 
-    private static void handleCalenderMenue(Scanner userIn , List<Event> theEventList) {
+    private static void handleCalenderMenue(Scanner userIn , List<Event> theEventList , int column , int row) {
         boolean quiteSubMenue = false;
         Scanner theCalenderInput = userIn;
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime selectedTime = now;
 
 //    starting print call
-        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
         printCalenderMenue();
 
 
@@ -159,63 +131,63 @@ public class App {
                         selectedTime = selectedTime.plusDays(1);
 
 
-                        printCalender(selectedTime ,filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
                     case "+w": {
                         selectedTime = selectedTime.plusWeeks(1);
 
-                        printCalender(selectedTime ,filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
                     case "+m": {
                         selectedTime = selectedTime.plusMonths(1);
 
-                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
                     case "+y": {
                         selectedTime = selectedTime.plusYears(1);
 
-                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
                     case "-d": {
                         selectedTime = selectedTime.minusDays(1);
 
-                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
                     case "-w": {
                         selectedTime = selectedTime.minusWeeks(1);
 
-                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
                     case "-m": {
                         selectedTime = selectedTime.minusMonths(1);
 
-                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
                     case "-y": {
                         selectedTime = selectedTime.minusYears(1);
 
-                        printCalender(selectedTime ,filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
                     case "t": {
                         selectedTime = LocalDateTime.now();
 
-                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList ));
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
                         printCalenderMenue();
                         break;
                     }
@@ -261,18 +233,18 @@ public class App {
 
     private static void getLocale() {
         System.out.println("Get Locale");
-
     }
 
-    private static void printCalender(LocalDateTime refTime , List<EventPrintObject> theEventList) {
+    private static void printCalender(LocalDateTime refTime , List<EventPrintObject> theEventList , int column , int row) {
 
-        String[] dateList = intializeDates(refTime);
-        String[][] messages = new String[25][7];
-        String[] rowHeadings = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00"};
+
+        String[] dateList = intializeDates(refTime , column);
+        String[][] messages = new String[row][column];
+        String[] rowHeadings = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00" , "Full-Day-Events"};
 
         //Initlaize the calender to null
-        for(int i=0;i<25;i++){
-            for(int j=0;j<7;j++){
+        for(int i=0;i<row;i++){
+            for(int j=0;j<column;j++){
                 messages[i][j] = " ";
             }
         }
@@ -281,7 +253,7 @@ public class App {
         for(EventPrintObject theEventPrintObj : theEventList){
             int theXVal = theEventPrintObj.getxVal();
             int theYVal = theEventPrintObj.getyVal();
-            messages[theXVal][theYVal] = theEventPrintObj.getTheEvent().getTitle();
+            messages[theXVal][theYVal] = messages[theXVal][theYVal] +"|"+ theEventPrintObj.getTheEvent().getTitle();
         }
 
 
@@ -296,35 +268,38 @@ public class App {
 
     }
 
-    private static String[] intializeDates(LocalDateTime refDate) {
-        String[] dateList = new String[7];
+    private static String[] intializeDates(LocalDateTime refDate , int col) {
+        String[] dateList = new String[col];
         LocalDateTime newDate = refDate;
         dateList[0] = refDate.getDayOfWeek().toString() + "\n" + refDate.toLocalDate().toString();
-
-        for (int i = 1; i < 7; i++) {
+        for (int i = 1; i < col; i++) {
             newDate = newDate.plusDays(1);
             dateList[i] = newDate.getDayOfWeek().toString() + "\n" + newDate.toLocalDate().toString();
         }
-
         return dateList;
     }
 
-    private static List<EventPrintObject> filterWeeklyEvents(LocalDate refDate , List<Event> eventList){
+    private static List<EventPrintObject> filterWeeklyEvents(LocalDate refDate , List<Event> eventList , int row){
         List<EventPrintObject> weekelyEvents = new ArrayList<>();
         LocalDate currentDate = refDate;
-
 //        filtering all the weekly events
         for (int i = 0; i < 7; i++) {
             for(Event theEvent : eventList){
                 if(theEvent.getStartDate().isEqual(currentDate)){
-                    System.out.println("has a match");
-                    System.out.println();
-                    EventPrintObject theEventPrintObject = new EventPrintObject(theEvent,theEvent.getStartTime().getHour(),i);
-                    weekelyEvents.add(theEventPrintObject);
+
+                    if(theEvent.isAllDay()){
+                        EventPrintObject theEventPrintObject = new EventPrintObject(theEvent,row-1,i);
+                        weekelyEvents.add(theEventPrintObject);
+                    }else{
+                        EventPrintObject theEventPrintObject = new EventPrintObject(theEvent,theEvent.getStartTime().getHour(),i);
+                        weekelyEvents.add(theEventPrintObject);
+                    }
+
                 }
             }
             currentDate = currentDate.plusDays(1);
         }
+
 
         return  weekelyEvents;
     }

@@ -23,7 +23,7 @@ public class Repeat implements CalenderPlugginInterface {
         LocalDate theCurrentDate = date;
 //        creaging repeat events
         while (theCurrentDate.isBefore(theRepeatEndDate)) {
-            Event event = new Event(title, theCurrentDate, time);
+            Event event = new Event(title,date,time,duration);
             theRepeatEventList.add(event);
             theCurrentDate = theCurrentDate.plusDays(duration);
 
@@ -34,5 +34,6 @@ public class Repeat implements CalenderPlugginInterface {
     @Override
     public void start(CalenderAppAPI theAPI) {
         this.theAPI = theAPI;
+        System.out.println("Repeat plugin has started");
     }
 }

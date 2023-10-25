@@ -8,7 +8,7 @@
 PARSER_BEGIN(MyParser)
 package calenderapp.app;
 import calenderapp.utilities.Event;
-import calenderapp.utilities.ParseObject;
+import calenderapp.utilities.ParseObject;import calenderapp.utilities.PlugginParser;
 import java.io.*;
 import java.time.format.DateTimeFormatter;
 import java.time.*;
@@ -20,6 +20,7 @@ public class MyParser
 
     private static ParseObject theParseList = new ParseObject();
 
+
     public ParseObject parse(String filename) throws IOException,ParseException
     {
 
@@ -28,6 +29,8 @@ public class MyParser
 
             return theParseList;
     }
+
+
 
 }
 PARSER_END(MyParser)
@@ -98,7 +101,6 @@ void plugin():
         (<TEXTKEY> ":" eventTitle = <STRING> "}"
             {
                  eventTitleVal = eventTitle.image;
-
                  System.out.println("Plugin Notify Identified" + eventTitleVal);
             }
         )
@@ -115,6 +117,13 @@ void plugin():
                     repeatVal = repeat.image;
 
                     System.out.println("Plugin Identified: "+pluginStringVal+eventTitleVal+startDateVal+startTimeVal+durationVal+repeatVal);
+                    PlugginParser theParser = new PlugginParser("calenderapp.repeat.Repeat");
+                    theParser.addArguments("title","This is a repeat event");
+                    theParser.addArguments("StartDate",LocalDate.now().toString());
+                    theParser.addArguments("StartTime",LocalTime.now().toString());
+                    theParser.addArguments("duration",String.valueOf(20));
+                    theParseList.addPluggin(theParser);
+
                 }
             )
             |
@@ -180,6 +189,8 @@ void event() :
                 dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 localDate = LocalDate.parse(dateString, dateFormatter);
                 System.out.println("All-Day Event: "+titleString+" Date: "+localDate);
+                Event theFullDayEvent = new Event(titleString,localDate);
+                theParseList.addEvent(theFullDayEvent);
             }
         )
     )
