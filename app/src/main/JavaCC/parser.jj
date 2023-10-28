@@ -118,10 +118,11 @@ void plugin():
 
                     System.out.println("Plugin Identified: "+pluginStringVal+eventTitleVal+startDateVal+startTimeVal+durationVal+repeatVal);
                     PlugginParser theParser = new PlugginParser("calenderapp.repeat.Repeat");
-                    theParser.addArguments("title","This is a repeat event");
-                    theParser.addArguments("StartDate",LocalDate.now().toString());
-                    theParser.addArguments("StartTime",LocalTime.now().toString());
-                    theParser.addArguments("duration",String.valueOf(20));
+                    theParser.addArguments("title",eventTitleVal);
+                    theParser.addArguments("StartDate",startDateVal);
+                    theParser.addArguments("StartTime",startTimeVal);
+                    theParser.addArguments("duration",durationVal);
+                    theParser.addArguments("repeat",repeatVal);
                     theParseList.addPluggin(theParser);
 
                 }
@@ -133,8 +134,15 @@ void plugin():
                     pluginStringVal = pluginToken.image;
                     eventTitleVal = eventTitle.image;
                     repeatVal = repeat.image;
+                    startDateVal = startDate.image;
+//                    TODO:Make the type dynamic
+                    PlugginParser theParserAllDayRepeat = new PlugginParser("calenderapp.repeat.Repeat");
+                    theParserAllDayRepeat.addArguments("title",eventTitleVal);
+                    theParserAllDayRepeat.addArguments("StartDate",startDateVal);
+                    theParserAllDayRepeat.addArguments("repeat",repeatVal);
+                    theParseList.addPluggin(theParserAllDayRepeat);
 
-                    System.out.println("Plugin Identified: "+pluginStringVal+eventTitleVal+repeatVal+" All-day event");
+
                 }
             )
         )
@@ -175,7 +183,7 @@ void event() :
     durationString = durationToken.image;
     duration = Integer.parseInt(durationString);
     System.out.println("Event: "+titleString+" Date: "+localDate+" Time: "+localTime+" Duration: "+duration);
-    Event theEvent = new Event(titleString,localDate,localTime,duration);
+    Event theEvent = new Event(titleString,localDate,localTime,duration,0);
     theParseList.addEvent(theEvent);
 
 }

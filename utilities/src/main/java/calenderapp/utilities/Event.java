@@ -11,18 +11,33 @@ public class Event {
     private int duration;
 
     private boolean allDay;
+    private int repeat;
 
+    //    contructor for all day events
     public Event(String title ,  LocalDate date){
         this.title = title;
         this.startDate = date;
         this.allDay = true;
     }
-    public Event(String title , LocalDate date , LocalTime time , int duration) {
+
+    //    contructor for repetitive events
+    public Event(String title , LocalDate date , LocalTime time , int duration , int repeat) {
+        this.title = title;
+        this.startTime = time;
+        this.startDate = date;
+        this.duration = duration;
+        this.repeat = repeat;
+        this.allDay = false;
+
+    }
+//    contructor for normal events
+    public Event(String title , LocalDate date , LocalTime time , int duration ) {
         this.title = title;
         this.startTime = time;
         this.startDate = date;
         this.duration = duration;
         this.allDay = false;
+
     }
 
     public String getTitle() {
@@ -55,6 +70,18 @@ public class Event {
 
     public void setAllDay(boolean allDay) {
         this.allDay = allDay;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public int getRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(int repeat) {
+        this.repeat = repeat;
     }
 
     @Override

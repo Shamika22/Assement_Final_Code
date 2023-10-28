@@ -8,11 +8,19 @@ plugin calenderapp.repeat.Repeat
 }
 plugin calenderapp.repeat.Repeat
 {
-    title: "This is a repeat event",
+    title: "This is a repeat event one",
     StartDate: 2023-10-30,
     StartTime: 10:30:00,
     duration: 50,
-    repeat: 5
+    repeat: 2
+}
+plugin calenderapp.repeat.Repeat
+{
+    title: "This is a repeat event Two",
+    StartDate: 2023-10-27,
+    StartTime: 10:30:00,
+    duration: 50,
+    repeat: 4
 }
 event 2023-10-31 08:30:45 45 "Meeting 2"
 event 2023-10-25 all-day "Christmas Day"

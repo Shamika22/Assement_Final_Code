@@ -12,14 +12,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import calenderapp.api.*;
-import calenderapp.calplugins.*;
 
 import java.lang.reflect.*;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.time.format.TextStyle;
+import java.util.*;
 //import org.python.core.*;
 //import org.python.util.*;
 
@@ -27,59 +24,45 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) {
 //      VARIABLES AND CONSTS
-        int column = 7;
-        int row = 26;
+        int column = 7; // Default colum size
+        int row = 26; // Default row size
         boolean quiteMain = false;
         Scanner userIn = new Scanner(System.in);  // Create a Scanner object
         List<Event> theEventList = new ArrayList<>(); // This is the main event list
+        Map<String,CalenderPlugginInterface> theActivePlugginList;
 
-//        READ THE PARSER AND LOAD THE INITIAL EVENT DATA
+//      Locale Settings
+        Locale systemDefaultLocale = Locale.forLanguageTag(Locale.getDefault().toLanguageTag());
+//      Loading the bundle
+        ResourceBundle systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
+
+        System.out.println(systemDefaultBundle.getString("SubMenueOptionTwo"));
+
+//      READ THE PARSER AND LOAD THE INITIAL EVENT DATA
         PlugginLoader thePlugginLoader = new PlugginLoader();
         thePlugginLoader.getEvents();
+        thePlugginLoader.loadPluggins();
 
-//        INTITIAZE THE PLUGGINS
-
-
-
-
-//        try{
-//            InputStream inputStream = MyParser.class.getResourceAsStream("/" + "input.txt");
-//            MyParser theParser = new MyParser(inputStream);
-//            ParseObject theParsedObjectList = theParser.parse("input.txt");
-//
-//            System.out.println();
-//        }catch (Exception e){
-//            System.out.println(e);
-//        }
+//      TAKE ALL ACTIVE PLUGINS AND CRATED EVENTS
+        theEventList = thePlugginLoader.getTheMainEventlist();
+        theActivePlugginList = thePlugginLoader.getTheActivePluginList();
 
 
-
-
-
-//        Loading pluggins
-//
-
-
-
+//      START THE MENUES
         do {
-            printMainMenue();
-
+            printMainMenue(systemDefaultBundle);
             try {
                 int mainMenueSelection = Integer.parseInt(userIn.nextLine());
-
                 switch (mainMenueSelection) {
                     case 1: {
-                        handleCalenderMenue(userIn , theEventList , column , row);
+
+                      handleCalenderMenue(userIn , theEventList , column , row , systemDefaultBundle , systemDefaultLocale);
                         break;
                     }
                     case 2: {
-
-//                        PythonInterpreter interpreter = new PythonInterpreter();
-//                        String pythonScript = "result = 5 + 3\n" +
-//                                "print('The sum of 5 and 3 is:', result)";
-//                        interpreter.exec(pythonScript);
-
-
+                        System.out.println("Please enter a valid locale type");
+                        systemDefaultLocale = Locale.forLanguageTag(userIn.nextLine());
+                        systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
                         break;
                     }
                     case 3: {
@@ -105,22 +88,19 @@ public class App {
     }
 
 
-    private static void handleCalenderMenue(Scanner userIn , List<Event> theEventList , int column , int row) {
+    private static void handleCalenderMenue(Scanner userIn , List<Event> theEventList , int column , int row , ResourceBundle theSetBundle , Locale theSetLocale) {
         boolean quiteSubMenue = false;
-        Scanner theCalenderInput = userIn;
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime selectedTime = now;
+        LocalDateTime selectedTime = LocalDateTime.now();
 
 //    starting print call
-        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-        printCalenderMenue();
-
+        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale);
+        printCalenderMenue(theSetBundle);
 
         while (!quiteSubMenue) {
 
             try {
 //                TODO:Here the calender render need to be callled
-                String calenderMenueInput = theCalenderInput.nextLine();
+                String calenderMenueInput = userIn.nextLine();
 
                 switch (calenderMenueInput) {
                     case "q": {
@@ -131,64 +111,64 @@ public class App {
                         selectedTime = selectedTime.plusDays(1);
 
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale);
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+w": {
                         selectedTime = selectedTime.plusWeeks(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale );
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+m": {
                         selectedTime = selectedTime.plusMonths(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale );
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+y": {
                         selectedTime = selectedTime.plusYears(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale);
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-d": {
                         selectedTime = selectedTime.minusDays(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale);
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-w": {
                         selectedTime = selectedTime.minusWeeks(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale);
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-m": {
                         selectedTime = selectedTime.minusMonths(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale );
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-y": {
                         selectedTime = selectedTime.minusYears(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale );
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "t": {
                         selectedTime = LocalDateTime.now();
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row );
-                        printCalenderMenue();
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row, theSetLocale );
+                        printCalenderMenue(theSetBundle);
                         break;
                     }
                 }
@@ -197,7 +177,7 @@ public class App {
 
             } catch (InputMismatchException error) {
                 System.out.println(error);
-                theCalenderInput.nextInt();//clear the buffer by consuming that
+                userIn.nextInt();//clear the buffer by consuming that
             }
 
         }
@@ -206,39 +186,33 @@ public class App {
 
     }
 
-    private static void printCalenderMenue() {
+    private static void printCalenderMenue(ResourceBundle theSetBundle) {
 
-        System.out.println("Time Travel Menu\n" +
+        System.out.println(theSetBundle.getString("SubTitle")+"\n" +
                 "\n" +
-                "Forward Time Travel:" + "       " + "Backward Time Travel:" + "       " + "Others:" +
-                "\n" +
-                "+d: Go forward 1 day" + "        " + "-d: Go back 1 day" + "         " + "t:Return to Today\n" +
-                "+w: Go forward 1 week" + "       " + "-w: Go back 1 week" + "        " + "q:Back to main menue\n" +
-                "+m: Go forward 1 month" + "      " + "-m: Go back 1 month\n" +
-                "+y: Go forward 1 year" + "       " + "-y: Go back 1 year\n"
+                "+d: "+theSetBundle.getString("SubMenueOptionOne") + "        " + "-d: "+theSetBundle.getString("SubMenueOptionTwo") + "         " + "t: "+theSetBundle.getString("SubMenueOptionThree")+"\n" +
+                "+w: "+theSetBundle.getString("SubMenueOptionFour") + "       " + "-w: "+theSetBundle.getString("SubMenueOptionFive") + "        " + "q: "+theSetBundle.getString("SubMenueOptionSix")+"\n" +
+                "+m: "+theSetBundle.getString("SubMenueOptionSeven") + "      " + "-m: "+theSetBundle.getString("SubMenueOptionEight") + "\n" +
+                "+y: "+theSetBundle.getString("SubMenueOptionNine") + "       " + "-y: "+theSetBundle.getString("SubMenueOptionTen") + "\n"
         );
+
 
         System.out.println("Please input a control");
 
     }
 
-    private static void printMainMenue() {
-        System.out.println("Welcome to the calender application");
-        System.out.println("Main Menue");
-        System.out.println("1. Go to calender");
-        System.out.println("2. Select locale");
-        System.out.println("3. Exit");
-
+    private static void printMainMenue(ResourceBundle theSetBundle) {
+        System.out.println(theSetBundle.getString("MainTitle"));
+        System.out.println(theSetBundle.getString("Heading"));
+        System.out.println("1."+theSetBundle.getString("MainMenueOptionOne"));
+        System.out.println("2."+theSetBundle.getString("MainMenueOptionTwo"));
+        System.out.println("3."+theSetBundle.getString("MainMenueOptionThree"));
     }
 
-    private static void getLocale() {
-        System.out.println("Get Locale");
-    }
-
-    private static void printCalender(LocalDateTime refTime , List<EventPrintObject> theEventList , int column , int row) {
+    private static void printCalender(LocalDateTime refTime , List<EventPrintObject> theEventList , int column , int row , Locale theSetLocale) {
 
 
-        String[] dateList = intializeDates(refTime , column);
+        String[] dateList = intializeDates(refTime , column , theSetLocale);
         String[][] messages = new String[row][column];
         String[] rowHeadings = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00" , "Full-Day-Events"};
 
@@ -268,13 +242,13 @@ public class App {
 
     }
 
-    private static String[] intializeDates(LocalDateTime refDate , int col) {
+    private static String[] intializeDates(LocalDateTime refDate , int col , Locale theSetLocale) {
         String[] dateList = new String[col];
         LocalDateTime newDate = refDate;
-        dateList[0] = refDate.getDayOfWeek().toString() + "\n" + refDate.toLocalDate().toString();
+        dateList[0] = refDate.getDayOfWeek().getDisplayName(TextStyle.FULL,theSetLocale) + "\n" + refDate.toLocalDate().toString();
         for (int i = 1; i < col; i++) {
             newDate = newDate.plusDays(1);
-            dateList[i] = newDate.getDayOfWeek().toString() + "\n" + newDate.toLocalDate().toString();
+            dateList[i] = newDate.getDayOfWeek().getDisplayName(TextStyle.FULL,theSetLocale) + "\n" + newDate.toLocalDate().toString();
         }
         return dateList;
     }
@@ -300,6 +274,7 @@ public class App {
             currentDate = currentDate.plusDays(1);
         }
 
+        System.out.println(weekelyEvents);
 
         return  weekelyEvents;
     }

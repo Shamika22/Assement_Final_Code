@@ -13,11 +13,15 @@ import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlugginLoader {
-    List<Event> theMainEventlist = new ArrayList<>();
-    List<PlugginParser> thePlugginList;
+    private List<Event> theMainEventlist = new ArrayList<>();
+    private List<PlugginParser> thePlugginObjList;
+
+    private Map<String , CalenderPlugginInterface> theActivePluginList = new HashMap<>();
 
     public void getEvents() {
 
@@ -25,20 +29,17 @@ public class PlugginLoader {
             InputStream inputStream = MyParser.class.getResourceAsStream("/" + "input.txt");
             MyParser theParser = new MyParser(inputStream);
             ParseObject theParsedObjectList = theParser.parse("input.txt");
-
             theMainEventlist = theParsedObjectList.getEventList();
-            thePlugginList = theParsedObjectList.getPlugginList();
-
+            thePlugginObjList = theParsedObjectList.getPlugginList();
 
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        loadPluggins();
-
     }
 
     public void loadPluggins() {
+
 
 
 //        Intialize the Calender API
@@ -48,28 +49,24 @@ public class PlugginLoader {
             public void printVal(String theVal) {
 
             }
-
             @Override
             public void addEvent(List<Event> theEventLisIn) {
+                System.out.println(theEventLisIn);
                 theMainEventlist.addAll(theEventLisIn);
             }
         };
+
         try {
-            for (PlugginParser thePluginParser : thePlugginList) {
+            for (PlugginParser thePluginParser : thePlugginObjList) {
 
                 System.out.println(thePluginParser.getPlugginID());
 
                 Class<?> theRunTimeClass = Class.forName(thePluginParser.getPlugginID());
                 CalenderPlugginInterface thePluggin = (CalenderPlugginInterface) theRunTimeClass.getConstructor().newInstance();
 
-                thePluggin.start(theMainAPI);
+                thePluggin.start(theMainAPI , thePluginParser.getArgumentMap());
 
-//                for (Method method : theRunTimeClass.getMethods()) {
-//                    Annotation annotation = method.getAnnotation(CreateRepeatEvents.class);
-//                    if (annotation != null) {
-//                        method.invoke(thePluggin, "THis is the main event", LocalDate.now(), LocalTime.now(), 2);
-//                    }
-//                }
+                theActivePluginList.put(thePluginParser.getPlugginID(),thePluggin);
 
 
             }
@@ -78,6 +75,17 @@ public class PlugginLoader {
             throw new RuntimeException(e);
         }
 
+    }
 
+    public List<Event> getTheMainEventlist() {
+        return theMainEventlist;
+    }
+
+    public List<PlugginParser> getThePlugginObjList() {
+        return thePlugginObjList;
+    }
+
+    public Map<String, CalenderPlugginInterface> getTheActivePluginList() {
+        return theActivePluginList;
     }
 }
