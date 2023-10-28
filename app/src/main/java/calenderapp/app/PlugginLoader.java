@@ -23,6 +23,8 @@ public class PlugginLoader {
 
     private Map<String , CalenderPlugginInterface> theActivePluginList = new HashMap<>();
 
+
+
     public void getEvents() {
 
         try {
@@ -54,6 +56,8 @@ public class PlugginLoader {
                 System.out.println(theEventLisIn);
                 theMainEventlist.addAll(theEventLisIn);
             }
+
+
         };
 
         try {

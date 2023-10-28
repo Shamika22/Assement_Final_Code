@@ -20,13 +20,13 @@ public class Repeat implements CalenderPlugginInterface {
 
     public void makeEvents(Map<String, String>argumentMap) {
 //        TODO:All dat but repetive events are not handled yet
-        if(argumentMap.containsKey("title") && argumentMap.containsKey("StartDate") && argumentMap.containsKey("StartTime") && argumentMap.containsKey("duration") && argumentMap.containsKey("repeat")){
+        if(argumentMap.containsKey("title") && argumentMap.containsKey("startDate") && argumentMap.containsKey("startTime") && argumentMap.containsKey("duration") && argumentMap.containsKey("repeat")){
             System.out.println(argumentMap.containsKey("title"));
             try {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                LocalDate localDate = LocalDate.parse(argumentMap.get("StartDate"), dateFormatter);
-                LocalTime localTime = LocalTime.parse(argumentMap.get("StartTime"), timeFormatter);
+                LocalDate localDate = LocalDate.parse(argumentMap.get("startDate"), dateFormatter);
+                LocalTime localTime = LocalTime.parse(argumentMap.get("startTime"), timeFormatter);
 
                 LocalDate theRepeatEndDate = localDate.plusYears(1);
                 LocalDate theCurrentDate = localDate;
@@ -38,17 +38,17 @@ public class Repeat implements CalenderPlugginInterface {
                 }
 
             }catch (DateTimeParseException e){
-                System.out.println(e);
+                System.out.println(" *****WARNINGE***** Error while loading the repeat pluggin data the error is" + e);
             }catch (Exception e){
-                System.out.println("Error occured while reading arguments from argument map");
+                System.out.println(" *****WARNINGE***** Error while loading the repeat pluggin data the error is" + e);
             }
 
 
 
-        } else if(argumentMap.containsKey("title") && argumentMap.containsKey("StartDate") &&  argumentMap.containsKey("repeat") ){
+        } else if(argumentMap.containsKey("title") && argumentMap.containsKey("startDate") &&  argumentMap.containsKey("repeat") ){
             try {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate localDate = LocalDate.parse(argumentMap.get("StartDate"), dateFormatter);
+                LocalDate localDate = LocalDate.parse(argumentMap.get("startDate"), dateFormatter);
 
                 LocalDate theRepeatEndDate = localDate.plusYears(1);
                 LocalDate theCurrentDate = localDate;
@@ -61,9 +61,9 @@ public class Repeat implements CalenderPlugginInterface {
                 }
 
             }catch (DateTimeParseException e){
-                System.out.println(e);
+                System.out.println(" *****WARNINGE***** Error while loading the repeat pluggin data the error is" + e);
             }catch (Exception e){
-                System.out.println("Error occured while reading arguments from argument map");
+                System.out.println(" *****WARNINGE*****  E rror while loading the repeat pluggin data the error is" + e);
             }
 
         } else {

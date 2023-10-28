@@ -42,20 +42,24 @@ TOKEN: {
     < WORLD: "world" > |
     < EVENT: "event"> |
     < DATE: "20"(["0"-"9"])* "-" ["0"-"9"] ["0"-"9"] "-" ["0"-"9"] ["0"-"9"] > |
+
     < INTEGER: (["0"-"9"])+ > |
     < TIME: (["0"-"2"]["0"-"9"])":"(["0"-"5"]["0"-"9"])":"(["0"-"5"]["0"-"9"]) >|
+    < TIMEPLUGIN: "\"""([0-2][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]""" >|
     < STRING: "\"" (~["\""])* "\"" > |
+
     < ALLDAY: "all-day"> |
-    < TITLEKEY: "title"> |
     < DATEKEY: "StartDate"> |
     < TIMEKEY: "StartTime"> |
-    < DURATIONKEY: "duration"> |
-    < REPEATKEY: "repeat"> |
+
+
     < PLUGIN: "plugin"> |
     < LBRACE: "{" > |
     < RBRACE: "}" > |
-    <TEXTKEY:"text">|
+    <TEXTKEY: "text">|
+    <IDENTIFIER: (["a"-"z","A"-"Z","-"])(["a"-"z","A"-"Z","-","0"-"9"])*> |
     < PLUGINID: (["a"-"z", "A"-"Z", "."])+ > |
+
     < COMMA: ","> |
     < COLON: ":">
 
@@ -84,72 +88,39 @@ void hello():
 void plugin():
 {
     Token pluginToken;
-    Token eventTitle ;
-    Token startDate ;
-    Token startTime ;
-    Token duration ;
-    Token repeat ;
-    String pluginStringVal;
-    String eventTitleVal ;
-    String startDateVal ;
-    String startTimeVal ;
-    String durationVal ;
-    String repeatVal ;
+    Token identifier;
+    Token value;
+    String pluginTokenVal;
+    String identifierVal;
+    String valueVal;
 
 }
 {
-    <PLUGIN> pluginToken = <PLUGINID> <LBRACE> (
-        (<TEXTKEY> ":" eventTitle = <STRING> "}"
-            {
-                 eventTitleVal = eventTitle.image;
-                 System.out.println("Plugin Notify Identified" + eventTitleVal);
-            }
-        )
-        |
-        (<TITLEKEY> ":" eventTitle = <STRING> "," "StartDate" ":" startDate = <DATE> "," (
-            (
-                "StartTime" ":" startTime = <TIME> "," "duration" ":" duration=<INTEGER> "," "repeat" ":" repeat=<INTEGER> "}"
-                {
-                    pluginStringVal = pluginToken.image;
-                    eventTitleVal = eventTitle.image;
-                    startTimeVal = startTime.image;
-                    startDateVal = startDate.image;
-                    durationVal = duration.image;
-                    repeatVal = repeat.image;
+    <PLUGIN> pluginToken = <PLUGINID> <LBRACE>
+    {
+        pluginTokenVal = pluginToken.image;
+        PlugginParser thePluginParser = new PlugginParser(pluginTokenVal);
+    }
 
-                    System.out.println("Plugin Identified: "+pluginStringVal+eventTitleVal+startDateVal+startTimeVal+durationVal+repeatVal);
-                    PlugginParser theParser = new PlugginParser("calenderapp.repeat.Repeat");
-                    theParser.addArguments("title",eventTitleVal);
-                    theParser.addArguments("StartDate",startDateVal);
-                    theParser.addArguments("StartTime",startTimeVal);
-                    theParser.addArguments("duration",durationVal);
-                    theParser.addArguments("repeat",repeatVal);
-                    theParseList.addPluggin(theParser);
+        (
+             identifier = <IDENTIFIER> ":" value = <STRING>
+             {
 
-                }
-            )
-            |
-            (
-                "repeat" ":" repeat=<INTEGER> "}"
-                {
-                    pluginStringVal = pluginToken.image;
-                    eventTitleVal = eventTitle.image;
-                    repeatVal = repeat.image;
-                    startDateVal = startDate.image;
-//                    TODO:Make the type dynamic
-                    PlugginParser theParserAllDayRepeat = new PlugginParser("calenderapp.repeat.Repeat");
-                    theParserAllDayRepeat.addArguments("title",eventTitleVal);
-                    theParserAllDayRepeat.addArguments("StartDate",startDateVal);
-                    theParserAllDayRepeat.addArguments("repeat",repeatVal);
-                    theParseList.addPluggin(theParserAllDayRepeat);
+                 identifierVal = identifier.image.replace("\"", "");
+                 valueVal = value.image.replace("\"", "");
+                 System.out.println(pluginTokenVal +identifierVal + valueVal);
+                 thePluginParser.addArguments(identifierVal,valueVal);
+             }
+             (
+                 ","
+             )?
+        )*
 
+        {
+            theParseList.addPluggin(thePluginParser);
+        }
 
-                }
-            )
-        )
-      )
-    )
-
+    "}"
 
 }
 
@@ -184,7 +155,7 @@ void event() :
     durationString = durationToken.image;
     duration = Integer.parseInt(durationString);
     System.out.println("Event: "+titleString+" Date: "+localDate+" Time: "+localTime+" Duration: "+duration);
-    Event theEvent = new Event(titleString,localDate,localTime,duration,0);
+    Event theEvent = new Event(titleString.replace("\"", ""),localDate,localTime,duration,0);
     theParseList.addEvent(theEvent);
 
 }
@@ -198,7 +169,7 @@ void event() :
                 dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 localDate = LocalDate.parse(dateString, dateFormatter);
                 System.out.println("All-Day Event: "+titleString+" Date: "+localDate);
-                Event theFullDayEvent = new Event(titleString,localDate);
+                Event theFullDayEvent = new Event(titleString.replace("\"", ""),localDate);
                 theParseList.addEvent(theFullDayEvent);
             }
         )
