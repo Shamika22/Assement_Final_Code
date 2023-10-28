@@ -21,7 +21,7 @@ public class Repeat implements CalenderPlugginInterface {
     public void makeEvents(Map<String, String>argumentMap) {
 //        TODO:All dat but repetive events are not handled yet
         if(argumentMap.containsKey("title") && argumentMap.containsKey("startDate") && argumentMap.containsKey("startTime") && argumentMap.containsKey("duration") && argumentMap.containsKey("repeat")){
-            System.out.println(argumentMap.containsKey("title"));
+
             try {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -63,7 +63,7 @@ public class Repeat implements CalenderPlugginInterface {
             }catch (DateTimeParseException e){
                 System.out.println(" *****WARNINGE***** Error while loading the repeat pluggin data the error is" + e);
             }catch (Exception e){
-                System.out.println(" *****WARNINGE*****  E rror while loading the repeat pluggin data the error is" + e);
+                System.out.println(" *****WARNINGE*****  Error while loading the repeat pluggin data the error is" + e);
             }
 
         } else {
@@ -79,5 +79,10 @@ public class Repeat implements CalenderPlugginInterface {
         this.theAPI = theAPI;
         System.out.println("Repeat plugin has started");
         makeEvents(argumentMap);
+    }
+
+    @Override
+    public void notify(Message theMessage) {
+
     }
 }

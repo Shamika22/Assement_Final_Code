@@ -56,7 +56,7 @@ TOKEN: {
     < PLUGIN: "plugin"> |
     < LBRACE: "{" > |
     < RBRACE: "}" > |
-    <TEXTKEY: "text">|
+
     <IDENTIFIER: (["a"-"z","A"-"Z","-"])(["a"-"z","A"-"Z","-","0"-"9"])*> |
     < PLUGINID: (["a"-"z", "A"-"Z", "."])+ > |
 

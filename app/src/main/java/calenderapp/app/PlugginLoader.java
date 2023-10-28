@@ -53,7 +53,7 @@ public class PlugginLoader {
             }
             @Override
             public void addEvent(List<Event> theEventLisIn) {
-                System.out.println(theEventLisIn);
+
                 theMainEventlist.addAll(theEventLisIn);
             }
 

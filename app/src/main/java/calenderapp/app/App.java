@@ -16,8 +16,10 @@ import calenderapp.api.*;
 import java.lang.reflect.*;
 import java.time.LocalTime;
 import java.time.chrono.ChronoLocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
+import java.util.concurrent.*;
 //import org.python.core.*;
 //import org.python.util.*;
 
@@ -29,24 +31,56 @@ public class App {
         int row = 26; // Default row size
         boolean quiteMain = false;
         Scanner userIn = new Scanner(System.in);  // Create a Scanner object
-        List<Event> theEventList = new ArrayList<>(); // This is the main event list
+        List<Event> theEventList ; // This is the main event list
         Map<String,CalenderPlugginInterface> theActivePlugginList;
+        ScheduledExecutorService observerService = Executors.newSingleThreadScheduledExecutor();
 
 //      Locale Settings
         Locale systemDefaultLocale = Locale.forLanguageTag(Locale.getDefault().toLanguageTag());
 //      Loading the bundle
         ResourceBundle systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
 
-        System.out.println(systemDefaultBundle.getString("SubMenueOptionTwo"));
 
 //      READ THE PARSER AND LOAD THE INITIAL EVENT DATA
         PlugginLoader thePlugginLoader = new PlugginLoader();
         thePlugginLoader.getEvents();
         thePlugginLoader.loadPluggins();
 
-//      TAKE ALL ACTIVE PLUGINS AND CRATED EVENTS
+//      TAKE ALL ACTIVE PLUGINS AND CREATED EVENTS
         theEventList = thePlugginLoader.getTheMainEventlist();
         theActivePlugginList = thePlugginLoader.getTheActivePluginList();
+
+
+//       Start the executor service to look into the start of an event
+
+        Runnable theEventObserverTask = new Runnable() {
+            private List<Event> observerEventList = theEventList;
+            private Map<String,CalenderPlugginInterface> observerPlugginList = theActivePlugginList;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+             @Override
+             public void run() {
+                 for(Event theEvent : observerEventList){
+                     if(theEvent.isAllDay()){
+
+                     }else{
+//                         System.out.println(theEvent.getStartTime().format(formatter) +"       "+ LocalTime.now().format(formatter));
+                         if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter))){
+                             Message theMessage = new Message(theEvent);
+                             for(CalenderPlugginInterface thePlugginInstace : observerPlugginList.values()){
+                                 thePlugginInstace.notify(theMessage);
+                             }
+                         }
+                     }
+
+                 }
+             }
+         };
+
+
+        observerService.scheduleAtFixedRate(theEventObserverTask,0,1,TimeUnit.SECONDS);
+
+
+
 
 
 //      START THE MENUES
@@ -278,7 +312,7 @@ public class App {
         // With limited space
         terminalGrid.setTerminalWidth(130);
         terminalGrid.print(messages, rowHeadings, dateList);
-        System.out.println();
+
         terminalGrid.setTerminalWidth(120);
 
     }
@@ -315,7 +349,7 @@ public class App {
             currentDate = currentDate.plusDays(1);
         }
 
-        System.out.println(weekelyEvents);
+
 
         return  weekelyEvents;
     }

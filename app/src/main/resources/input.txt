@@ -3,20 +3,30 @@ hello world
 plugin calenderapp.repeat.Repeat
 {
     title:"THisis hte val",
-    startDate: "nnnnnnn",
+    startDate: "2023-10-29",
     startTime: "15:00:00",
     duration: "50",
     repeat:"2"
 
 }
 event 2023-10-31 08:30:45 45 "Meeting 2"
+event 2023-10-29 01:36:45 45 "TriggeredOne"
+event 2023-10-29 01:36:45 45 "TriggeredTwo"
 event 2023-10-25 all-day "Christmas Day"
-event 2023-10-25 all-day "Poya Day"
+event 2023-11-02 all-day "Poya Day"
+plugin calenderapp.repeat.Repeat
+{
+    title:"THisis hte val",
+    startDate: "2023-10-28",
+    repeat:"2"
+}
+
 event 2023-10-25 all-day "Full day Festival"
-
-
-
 event 2023-10-31 08:30:45 45 "Meeting 4"
+plugin calenderapp.notify.Notify
+{
+    text:"TriggeredTwo",
+}
 event 2023-10-31 08:30:45 45 "Meeting 5"
 event 2023-10-31 08:30:45 45 "Meeting 6"
 
