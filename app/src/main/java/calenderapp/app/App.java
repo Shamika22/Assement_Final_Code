@@ -15,6 +15,7 @@ import calenderapp.api.*;
 
 import java.lang.reflect.*;
 import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDate;
 import java.time.format.TextStyle;
 import java.util.*;
 //import org.python.core.*;
@@ -171,6 +172,32 @@ public class App {
                         printCalenderMenue(theSetBundle);
                         break;
                     }
+                    case "s":{
+                        selectedTime = LocalDateTime.now();
+                        System.out.println("Please enter an event to search ");
+                        String theSearchEvent = userIn.nextLine();
+
+//                        Do the seach for the array
+                        Event theEvent = searchEvent(theEventList,theSearchEvent , selectedTime);
+                        if(theEvent == null){
+//                            TODO: Add this to the bundle
+                            System.out.println("No such event");
+                        }else{
+                            System.out.println("********** SELECTED EVENT DETAILS ARE ************");
+                            System.out.println(theEvent.getTitle());
+                            System.out.println(theEvent.getStartDate());
+                            System.out.println(theEvent.getStartTime());
+                            System.out.println(theEvent.getDuration());
+                            System.out.println(theEvent.getRepeat());
+
+                        }
+
+                        break;
+                    }
+                    default: {
+
+                        break;
+                    }
                 }
                 ;
 
@@ -186,13 +213,27 @@ public class App {
 
     }
 
+    private static Event searchEvent(List<Event> theEventList , String seachTerm , LocalDateTime theRefDate){
+        Event theSelectedEvent = null;
+        LocalDateTime theEndDate = theRefDate.plusYears(1);
+
+        for(Event theEvent : theEventList){
+            if((theEvent.getStartDate().isEqual(ChronoLocalDate.from(theRefDate)) || theEvent.getStartDate().isBefore(ChronoLocalDate.from(theEndDate))||theEvent.getStartDate().isAfter(ChronoLocalDate.from(theRefDate)) ) && (theEvent.getTitle().equals(seachTerm))){
+                System.out.println("A match found");
+                theSelectedEvent = theEvent;
+                break;
+            }
+        }
+        return theSelectedEvent;
+    }
+
     private static void printCalenderMenue(ResourceBundle theSetBundle) {
 
         System.out.println(theSetBundle.getString("SubTitle")+"\n" +
                 "\n" +
                 "+d: "+theSetBundle.getString("SubMenueOptionOne") + "        " + "-d: "+theSetBundle.getString("SubMenueOptionTwo") + "         " + "t: "+theSetBundle.getString("SubMenueOptionThree")+"\n" +
                 "+w: "+theSetBundle.getString("SubMenueOptionFour") + "       " + "-w: "+theSetBundle.getString("SubMenueOptionFive") + "        " + "q: "+theSetBundle.getString("SubMenueOptionSix")+"\n" +
-                "+m: "+theSetBundle.getString("SubMenueOptionSeven") + "      " + "-m: "+theSetBundle.getString("SubMenueOptionEight") + "\n" +
+                "+m: "+theSetBundle.getString("SubMenueOptionSeven") + "      " + "-m: "+theSetBundle.getString("SubMenueOptionEight") + "        " + "s: "+theSetBundle.getString("SubMenueOptionSix")+"\n" +
                 "+y: "+theSetBundle.getString("SubMenueOptionNine") + "       " + "-y: "+theSetBundle.getString("SubMenueOptionTen") + "\n"
         );
 
