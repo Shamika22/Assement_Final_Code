@@ -17,13 +17,13 @@ public class Notify implements CalenderPlugginInterface {
         if(argumentList.containsKey("text")){
             this.theReminderEvent = argumentList.get("text");
         }
-        System.out.println(this.theReminderEvent);
-        System.out.println("Notify has started");
+
     }
 
     @Override
     public void notify(Message theMessage) {
         if(theMessage.getTheStartEvent().getTitle().equals(theReminderEvent)){
+
             System.out.println(theMessage.getTheStartEvent());
         }
     }

@@ -14,9 +14,10 @@ public class Event {
     private int repeat;
 
     //    contructor for all day events
-    public Event(String title ,  LocalDate date){
+    public Event(String title ,  LocalDate date , LocalTime time){
         this.title = title;
         this.startDate = date;
+        this.startTime = time;
         this.allDay = true;
     }
 

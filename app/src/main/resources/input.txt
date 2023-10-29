@@ -23,9 +23,20 @@ plugin calenderapp.repeat.Repeat
 
 event 2023-10-25 all-day "Full day Festival"
 event 2023-10-31 08:30:45 45 "Meeting 4"
+event 2023-10-29 13:45:45 45 "Meeting 11"
+event 2023-10-29 13:45:45 45 "Meeting 12"
+event 2023-10-29 13:45:45 45 "Meeting 13"
 plugin calenderapp.notify.Notify
 {
-    text:"TriggeredTwo",
+    text:"Meeting 11",
+}
+plugin calenderapp.notify.Notify
+{
+    text:"Meeting 12",
+}
+plugin calenderapp.notify.Notify
+{
+    text:"Meeting 13",
 }
 event 2023-10-31 08:30:45 45 "Meeting 5"
 event 2023-10-31 08:30:45 45 "Meeting 6"

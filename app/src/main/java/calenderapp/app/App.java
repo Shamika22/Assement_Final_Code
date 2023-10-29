@@ -35,100 +35,118 @@ public class App {
         Map<String,CalenderPlugginInterface> theActivePlugginList;
         ScheduledExecutorService observerService = Executors.newSingleThreadScheduledExecutor();
 
+//      validate the command line argument
+        if(args.length != 0 ){
+            String theFileName = args[0];
 //      Locale Settings
-        Locale systemDefaultLocale = Locale.forLanguageTag(Locale.getDefault().toLanguageTag());
+            Locale systemDefaultLocale = Locale.forLanguageTag(Locale.getDefault().toLanguageTag());
 //      Loading the bundle
-        ResourceBundle systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
+            ResourceBundle systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
 
 
 //      READ THE PARSER AND LOAD THE INITIAL EVENT DATA
-        PlugginLoader thePlugginLoader = new PlugginLoader();
-        thePlugginLoader.getEvents();
-        thePlugginLoader.loadPluggins();
+            PlugginLoader thePlugginLoader = new PlugginLoader();
+            thePlugginLoader.getEvents(theFileName);
+            thePlugginLoader.loadPluggins();
 
 //      TAKE ALL ACTIVE PLUGINS AND CREATED EVENTS
-        theEventList = thePlugginLoader.getTheMainEventlist();
-        theActivePlugginList = thePlugginLoader.getTheActivePluginList();
+            theEventList = thePlugginLoader.getTheMainEventlist();
+            theActivePlugginList = thePlugginLoader.getTheActivePluginList();
 
 
-//       Start the executor service to look into the start of an event
-
-        Runnable theEventObserverTask = new Runnable() {
-            private List<Event> observerEventList = theEventList;
-            private Map<String,CalenderPlugginInterface> observerPlugginList = theActivePlugginList;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-             @Override
-             public void run() {
-                 for(Event theEvent : observerEventList){
-                     if(theEvent.isAllDay()){
-
-                     }else{
-//                         System.out.println(theEvent.getStartTime().format(formatter) +"       "+ LocalTime.now().format(formatter));
-                         if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter))){
-                             Message theMessage = new Message(theEvent);
-                             for(CalenderPlugginInterface thePlugginInstace : observerPlugginList.values()){
-                                 thePlugginInstace.notify(theMessage);
-                             }
-                         }
-                     }
-
-                 }
-             }
-         };
-
-
-        observerService.scheduleAtFixedRate(theEventObserverTask,0,1,TimeUnit.SECONDS);
-
+            startObserverService(observerService , theEventList , theActivePlugginList);
 
 
 
 
 //      START THE MENUES
-        do {
-            printMainMenue(systemDefaultBundle);
-            try {
-                int mainMenueSelection = Integer.parseInt(userIn.nextLine());
-                switch (mainMenueSelection) {
-                    case 1: {
+            do {
+                printMainMenue(systemDefaultBundle);
+                try {
+                    int mainMenueSelection = Integer.parseInt(userIn.nextLine());
+                    switch (mainMenueSelection) {
+                        case 1: {
 
-                      handleCalenderMenue(userIn , theEventList , column , row , systemDefaultBundle , systemDefaultLocale);
-                        break;
-                    }
-                    case 2: {
-                        System.out.println("Please enter a valid locale type");
-                        systemDefaultLocale = Locale.forLanguageTag(userIn.nextLine());
-                        systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
-                        break;
-                    }
-                    case 3: {
-                        quiteMain = true;
-                        break;
+                            handleCalenderMenue(userIn , theEventList , column , row , systemDefaultBundle , systemDefaultLocale);
+                            break;
+                        }
+                        case 2: {
+                            System.out.println("Please enter a valid locale type");
+                            systemDefaultLocale = Locale.forLanguageTag(userIn.nextLine());
+                            systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
+                            break;
+                        }
+                        case 3: {
+                            if(!observerService.isShutdown()){
+                                observerService.shutdownNow();
+                            }
+                            quiteMain = true;
+                            break;
+                        }
+
+                        default: {
+                            break;
+                        }
+
                     }
 
-                    default: {
-                        break;
-                    }
-
+                } catch (InputMismatchException error) {
+                    System.out.println(error);
+                    userIn.nextLine();
                 }
 
-            } catch (InputMismatchException error) {
-                System.out.println(error);
-                userIn.nextLine();
-            }
+
+            } while (!quiteMain);
+
+        }else{
+            System.out.println(" *********WARNING********* No comand line argument is given EX: --args='input.txt'");
+        }
 
 
-        } while (!quiteMain);
+
 
 
     }
 
+    private static void startObserverService(ScheduledExecutorService observerService ,List<Event> theEventList , Map<String,CalenderPlugginInterface> theActivePlugginList ){
+        //       Start the executor service to look into the start of an event
+
+        Runnable theEventObserverTask = new Runnable() {
+            private List<Event> observerEventList = theEventList;
+            private Map<String,CalenderPlugginInterface> observerPlugginList = theActivePlugginList;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            @Override
+            public void run() {
+                for(Event theEvent : observerEventList){
+                    if(theEvent.isAllDay()){
+
+                    }else{
+//                         System.out.println(theEvent.getStartTime().format(formatter) +"       "+ LocalTime.now().format(formatter));
+                        if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter))){
+
+                            Message theMessage = new Message(theEvent);
+                            for(CalenderPlugginInterface thePlugginInstace : observerPlugginList.values()){
+
+                                thePlugginInstace.notify(theMessage);
+                            }
+                        }
+                    }
+
+                }
+            }
+        };
+
+
+        observerService.scheduleAtFixedRate(theEventObserverTask,0,1,TimeUnit.SECONDS);
+
+    }
 
     private static void handleCalenderMenue(Scanner userIn , List<Event> theEventList , int column , int row , ResourceBundle theSetBundle , Locale theSetLocale) {
         boolean quiteSubMenue = false;
         LocalDateTime selectedTime = LocalDateTime.now();
 
 //    starting print call
-        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale);
+        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
         printCalenderMenue(theSetBundle);
 
         while (!quiteSubMenue) {
@@ -146,69 +164,69 @@ public class App {
                         selectedTime = selectedTime.plusDays(1);
 
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale);
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale ,  theSetBundle);
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+w": {
                         selectedTime = selectedTime.plusWeeks(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale );
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+m": {
                         selectedTime = selectedTime.plusMonths(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale );
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+y": {
                         selectedTime = selectedTime.plusYears(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale);
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-d": {
                         selectedTime = selectedTime.minusDays(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale);
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-w": {
                         selectedTime = selectedTime.minusWeeks(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale);
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-m": {
                         selectedTime = selectedTime.minusMonths(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale );
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-y": {
                         selectedTime = selectedTime.minusYears(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale );
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "t": {
                         selectedTime = LocalDateTime.now();
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row, theSetLocale );
+                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row, theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "s":{
                         selectedTime = LocalDateTime.now();
-                        System.out.println("Please enter an event to search ");
+                        System.out.println(theSetBundle.getString("EventSearchReq"));
                         String theSearchEvent = userIn.nextLine();
 
 //                        Do the seach for the array
@@ -217,14 +235,33 @@ public class App {
 //                            TODO: Add this to the bundle
                             System.out.println("No such event");
                         }else{
-                            System.out.println("********** SELECTED EVENT DETAILS ARE ************");
-                            System.out.println(theEvent.getTitle());
-                            System.out.println(theEvent.getStartDate());
-                            System.out.println(theEvent.getStartTime());
-                            System.out.println(theEvent.getDuration());
-                            System.out.println(theEvent.getRepeat());
+                            if(theEvent.isAllDay()){
+                                System.out.println(theSetBundle.getString("SelectedEventTopic"));
+                                System.out.println(theEvent.getTitle());
+                                System.out.println(theEvent.getStartDate());
+                                System.out.println(theEvent.getRepeat());
+
+                                selectedTime = LocalDateTime.of(theEvent.getStartDate() , theEvent.getStartTime());
+                            }else{
+                                System.out.println(theSetBundle.getString("SelectedEventTopic"));
+                                System.out.println(theEvent.getTitle());
+                                System.out.println(theEvent.getStartDate());
+                                System.out.println(theEvent.getStartTime());
+                                System.out.println(theEvent.getDuration());
+                                System.out.println(theEvent.getRepeat());
+
+                                selectedTime = LocalDateTime.of(theEvent.getStartDate() , theEvent.getStartTime());
+                            }
+
 
                         }
+
+
+
+
+                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row, theSetLocale ,  theSetBundle);
+                        printCalenderMenue(theSetBundle);
+
 
                         break;
                     }
@@ -267,12 +304,12 @@ public class App {
                 "\n" +
                 "+d: "+theSetBundle.getString("SubMenueOptionOne") + "        " + "-d: "+theSetBundle.getString("SubMenueOptionTwo") + "         " + "t: "+theSetBundle.getString("SubMenueOptionThree")+"\n" +
                 "+w: "+theSetBundle.getString("SubMenueOptionFour") + "       " + "-w: "+theSetBundle.getString("SubMenueOptionFive") + "        " + "q: "+theSetBundle.getString("SubMenueOptionSix")+"\n" +
-                "+m: "+theSetBundle.getString("SubMenueOptionSeven") + "      " + "-m: "+theSetBundle.getString("SubMenueOptionEight") + "        " + "s: "+theSetBundle.getString("SubMenueOptionSix")+"\n" +
+                "+m: "+theSetBundle.getString("SubMenueOptionSeven") + "      " + "-m: "+theSetBundle.getString("SubMenueOptionEight") + "        " + "s: "+theSetBundle.getString("SubMenueOptionEleven")+"\n" +
                 "+y: "+theSetBundle.getString("SubMenueOptionNine") + "       " + "-y: "+theSetBundle.getString("SubMenueOptionTen") + "\n"
         );
 
 
-        System.out.println("Please input a control");
+        System.out.println(theSetBundle.getString("ControlInputSubmenue"));
 
     }
 
@@ -284,12 +321,12 @@ public class App {
         System.out.println("3."+theSetBundle.getString("MainMenueOptionThree"));
     }
 
-    private static void printCalender(LocalDateTime refTime , List<EventPrintObject> theEventList , int column , int row , Locale theSetLocale) {
+    private static void printCalender(LocalDateTime refTime , List<EventPrintObject> theEventList , int column , int row , Locale theSetLocale , ResourceBundle theSetBundle ) {
 
 
         String[] dateList = intializeDates(refTime , column , theSetLocale);
         String[][] messages = new String[row][column];
-        String[] rowHeadings = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00" , "Full-Day-Events"};
+        String[] rowHeadings = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00" , theSetBundle.getString("FullDayEventTag")};
 
         //Initlaize the calender to null
         for(int i=0;i<row;i++){

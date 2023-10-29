@@ -25,14 +25,16 @@ public class PlugginLoader {
 
 
 
-    public void getEvents() {
+    public void getEvents(String fileName) {
 
         try {
-            InputStream inputStream = MyParser.class.getResourceAsStream("/" + "input.txt");
+            InputStream inputStream = MyParser.class.getResourceAsStream("/" + fileName);
             MyParser theParser = new MyParser(inputStream);
             ParseObject theParsedObjectList = theParser.parse("input.txt");
             theMainEventlist = theParsedObjectList.getEventList();
             thePlugginObjList = theParsedObjectList.getPlugginList();
+
+
 
         } catch (Exception e) {
             System.out.println(e);
@@ -63,17 +65,22 @@ public class PlugginLoader {
         try {
             for (PlugginParser thePluginParser : thePlugginObjList) {
 
-                System.out.println(thePluginParser.getPlugginID());
+
 
                 Class<?> theRunTimeClass = Class.forName(thePluginParser.getPlugginID());
                 CalenderPlugginInterface thePluggin = (CalenderPlugginInterface) theRunTimeClass.getConstructor().newInstance();
 
                 thePluggin.start(theMainAPI , thePluginParser.getArgumentMap());
 
-                theActivePluginList.put(thePluginParser.getPlugginID(),thePluggin);
+                String uniqueIdentifier = Integer.toHexString(System.identityHashCode(thePluggin));
+
+
+                theActivePluginList.put(uniqueIdentifier,thePluggin);
 
 
             }
+
+
         } catch (Exception e) {
 //            TODO:The exeption need to be defined not generic
             throw new RuntimeException(e);

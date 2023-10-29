@@ -48,13 +48,15 @@ public class Repeat implements CalenderPlugginInterface {
         } else if(argumentMap.containsKey("title") && argumentMap.containsKey("startDate") &&  argumentMap.containsKey("repeat") ){
             try {
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                LocalTime localTime = LocalTime.parse("00:00:00", timeFormatter);
                 LocalDate localDate = LocalDate.parse(argumentMap.get("startDate"), dateFormatter);
 
                 LocalDate theRepeatEndDate = localDate.plusYears(1);
                 LocalDate theCurrentDate = localDate;
 //        creating repeat events
                 while (theCurrentDate.isBefore(theRepeatEndDate)) {
-                    Event theEvent = new Event(argumentMap.get("title"),theCurrentDate );
+                    Event theEvent = new Event(argumentMap.get("title"),theCurrentDate , localTime );
                     theEvent.setRepeat(Integer.parseInt(argumentMap.get("repeat")));
                     theRepeatEventList.add(theEvent);
                     theCurrentDate = theCurrentDate.plusDays(Integer.parseInt(argumentMap.get("repeat")));
@@ -70,14 +72,14 @@ public class Repeat implements CalenderPlugginInterface {
             System.out.println("Not all arguments are present to make a repeat event");
         }
 
-        System.out.println("Adding repeat events");
+
         theAPI.addEvent(theRepeatEventList);
     }
 
     @Override
     public void start(CalenderAppAPI theAPI , Map<String, String>argumentMap) {
         this.theAPI = theAPI;
-        System.out.println("Repeat plugin has started");
+
         makeEvents(argumentMap);
     }
 

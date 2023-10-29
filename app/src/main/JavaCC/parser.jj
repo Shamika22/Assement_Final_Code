@@ -108,7 +108,7 @@ void plugin():
 
                  identifierVal = identifier.image.replace("\"", "");
                  valueVal = value.image.replace("\"", "");
-                 System.out.println(pluginTokenVal +identifierVal + valueVal);
+
                  thePluginParser.addArguments(identifierVal,valueVal);
              }
              (
@@ -154,7 +154,7 @@ void event() :
     localTime = LocalTime.parse(timeString, timeFormatter);
     durationString = durationToken.image;
     duration = Integer.parseInt(durationString);
-    System.out.println("Event: "+titleString+" Date: "+localDate+" Time: "+localTime+" Duration: "+duration);
+
     Event theEvent = new Event(titleString.replace("\"", ""),localDate,localTime,duration,0);
     theParseList.addEvent(theEvent);
 
@@ -167,9 +167,11 @@ void event() :
                 dateString = dateToken.image;
                 titleString = titleToken.image;
                 dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
                 localDate = LocalDate.parse(dateString, dateFormatter);
-                System.out.println("All-Day Event: "+titleString+" Date: "+localDate);
-                Event theFullDayEvent = new Event(titleString.replace("\"", ""),localDate);
+                localTime = LocalTime.parse("00:00:00", timeFormatter);
+
+                Event theFullDayEvent = new Event(titleString.replace("\"", ""),localDate , localTime);
                 theParseList.addEvent(theFullDayEvent);
             }
         )
