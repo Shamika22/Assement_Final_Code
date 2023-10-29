@@ -1,0 +1,43 @@
+event 2023-10-29 15:00:00 90 "Meeting 1"
+hello world
+plugin calenderapp.repeat.Repeat
+{
+    title:"THisis hte val",
+    startDate: "2023-10-29",
+    startTime: "15:00:00",
+    duration: "50",
+    repeat:"2"
+
+}
+event 2023-10-31 08:30:45 45 "Meeting 2"
+event 2023-10-29 01:36:45 45 "TriggeredOne"
+event 2023-10-29 01:36:45 45 "TriggeredTwo"
+event 2023-10-25 all-day "Christmas Day"
+event 2023-11-02 all-day "Poya Day"
+plugin calenderapp.repeat.Repeat
+{
+    title:"THisis hte val",
+    startDate: "2023-10-28",
+    repeat:"2"
+}
+
+event 2023-10-25 all-day "Full day Festival"
+event 2023-10-31 08:30:45 45 "Meeting 4"
+event 2023-10-29 13:45:45 45 "Meeting 11"
+event 2023-10-29 13:45:45 45 "Meeting 12"
+event 2023-10-29 13:45:45 45 "Meeting 13"
+plugin calenderapp.notify.Notify
+{
+    text:"Meeting 11",
+}
+plugin calenderapp.notify.Notify
+{
+    text:"Meeting 12",
+}
+plugin calenderapp.notify.Notify
+{
+    text:"Meeting 13",
+}
+event 2023-10-31 08:30:45 45 "Meeting 5"
+event 2023-10-31 08:30:45 45 "Meeting 6"
+

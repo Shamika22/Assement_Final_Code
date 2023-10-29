@@ -7,9 +7,13 @@ import calenderapp.utilities.Event;
 import calenderapp.utilities.ParseObject;
 import calenderapp.utilities.PlugginParser;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -25,20 +29,40 @@ public class PlugginLoader {
 
 
 
-    public void getEvents(String fileName) {
-
+    public boolean getEvents(String fileName) {
+        Boolean readingState = true;
         try {
-            InputStream inputStream = MyParser.class.getResourceAsStream("/" + fileName);
-            MyParser theParser = new MyParser(inputStream);
-            ParseObject theParsedObjectList = theParser.parse("input.txt");
-            theMainEventlist = theParsedObjectList.getEventList();
-            thePlugginObjList = theParsedObjectList.getPlugginList();
 
+            File file = new File("src/main/resources/" + fileName);
+
+            if(file.exists()){
+                FileReader reader = new FileReader(file, StandardCharsets.UTF_8);
+
+                if (fileName.contains("utf8")) {
+                    reader = new FileReader(file, StandardCharsets.UTF_8);
+                } else if (fileName.contains("utf16")) {
+                    reader = new FileReader(file, StandardCharsets.UTF_16);
+                } else {
+//                32 is not supported in my version
+                }
+
+
+                MyParser theParser = new MyParser(reader);
+
+                ParseObject theParsedObjectList = theParser.parse("input.txt");
+                theMainEventlist = theParsedObjectList.getEventList();
+                thePlugginObjList = theParsedObjectList.getPlugginList();
+            }else{
+                readingState = false;
+            }
 
 
         } catch (Exception e) {
             System.out.println(e);
         }
+
+
+        return readingState;
 
     }
 

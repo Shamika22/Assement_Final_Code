@@ -46,64 +46,68 @@ public class App {
 
 //      READ THE PARSER AND LOAD THE INITIAL EVENT DATA
             PlugginLoader thePlugginLoader = new PlugginLoader();
-            thePlugginLoader.getEvents(theFileName);
-            thePlugginLoader.loadPluggins();
+            boolean readingState =  thePlugginLoader.getEvents(theFileName);
+
+            if(readingState){
+                thePlugginLoader.loadPluggins();
 
 //      TAKE ALL ACTIVE PLUGINS AND CREATED EVENTS
-            theEventList = thePlugginLoader.getTheMainEventlist();
-            theActivePlugginList = thePlugginLoader.getTheActivePluginList();
+                theEventList = thePlugginLoader.getTheMainEventlist();
+                theActivePlugginList = thePlugginLoader.getTheActivePluginList();
 
 
-            startObserverService(observerService , theEventList , theActivePlugginList);
+                startObserverService(observerService , theEventList , theActivePlugginList);
 
 
 
 
 //      START THE MENUES
-            do {
-                printMainMenue(systemDefaultBundle);
-                try {
-                    int mainMenueSelection = Integer.parseInt(userIn.nextLine());
-                    switch (mainMenueSelection) {
-                        case 1: {
+                do {
+                    printMainMenue(systemDefaultBundle);
+                    try {
+                        int mainMenueSelection = Integer.parseInt(userIn.nextLine());
+                        switch (mainMenueSelection) {
+                            case 1: {
 
-                            handleCalenderMenue(userIn , theEventList , column , row , systemDefaultBundle , systemDefaultLocale);
-                            break;
-                        }
-                        case 2: {
-                            System.out.println("Please enter a valid locale type");
-                            systemDefaultLocale = Locale.forLanguageTag(userIn.nextLine());
-                            systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
-                            break;
-                        }
-                        case 3: {
-                            if(!observerService.isShutdown()){
-                                observerService.shutdownNow();
+                                handleCalenderMenue(userIn , theEventList , column , row , systemDefaultBundle , systemDefaultLocale);
+                                break;
                             }
-                            quiteMain = true;
-                            break;
+                            case 2: {
+                                System.out.println("Please enter a valid locale type");
+                                systemDefaultLocale = Locale.forLanguageTag(userIn.nextLine());
+                                systemDefaultBundle = ResourceBundle.getBundle("bundle", systemDefaultLocale);
+                                break;
+                            }
+                            case 3: {
+                                if(!observerService.isShutdown()){
+                                    observerService.shutdownNow();
+                                }
+                                quiteMain = true;
+                                break;
+                            }
+
+                            default: {
+                                break;
+                            }
+
                         }
 
-                        default: {
-                            break;
-                        }
-
+                    } catch (InputMismatchException error) {
+                        System.out.println(error);
+                        userIn.nextLine();
                     }
 
-                } catch (InputMismatchException error) {
-                    System.out.println(error);
-                    userIn.nextLine();
-                }
 
+                } while (!quiteMain);
 
-            } while (!quiteMain);
+            }else{
+                System.out.println(" *********WARNING********* No such file in the resource directory of the main sub project app");
+            }
+
 
         }else{
             System.out.println(" *********WARNING********* No comand line argument is given EX: --args='input.txt'");
         }
-
-
-
 
 
     }

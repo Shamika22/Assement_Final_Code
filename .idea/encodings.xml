@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/resources/calendar.utf16.cal" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/app/src/main/resources/input16.txt" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/app/src/main/resources/input32.txt" charset="UTF-32" />
+    <file url="file://$PROJECT_DIR$/app/src/main/resources/inputtwo16.txt" charset="UTF-16" />
+  </component>
+</project>
