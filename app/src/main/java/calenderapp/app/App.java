@@ -4,36 +4,37 @@
 package calenderapp.app;
 
 import calenderapp.utilities.*;
-
-
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import calenderapp.api.*;
-
-import java.lang.reflect.*;
 import java.time.LocalTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 import java.util.concurrent.*;
-//import org.python.core.*;
-//import org.python.util.*;
+
 
 
 public class App {
+    @SuppressWarnings({"PMD.ConfusingTernary", "PMD.CloseResource"})
+    /*
+    * PMD.CloseResource : The userIn scanner is closed at the end of the main methos so when ever th emain exists tje scanner will get closed and that code is accesoble as well. Inaddition to that if the user press 3 from the main menue then alsoe the scaner will get closed so I have used safety measures
+    * PMD.ConfusingTernary : This suggets me not use != with in a if statemment in the line no 40 I stringly belive this is a vlid method and this will simply the code further and the logic can be expressed more easily so I suppressed that warning
+    *
+    *
+    * */
     public static void main(String[] args) {
 //      VARIABLES AND CONSTS
         int column = 7; // Default colum size
         int row = 26; // Default row size
         boolean quiteMain = false;
+
         Scanner userIn = new Scanner(System.in);  // Create a Scanner object
         List<Event> theEventList ; // This is the main event list
         Map<String,CalenderPlugginInterface> theActivePlugginList;
         ScheduledExecutorService observerService = Executors.newSingleThreadScheduledExecutor();
+
 
 //      validate the command line argument
         if(args.length != 0 ){
@@ -109,23 +110,30 @@ public class App {
             System.out.println(" *********WARNING********* No comand line argument is given EX: --args='input.txt'");
         }
 
-
+        userIn.close();
     }
 
     private static void startObserverService(ScheduledExecutorService observerService ,List<Event> theEventList , Map<String,CalenderPlugginInterface> theActivePlugginList ){
-        //       Start the executor service to look into the start of an event
+
 
         Runnable theEventObserverTask = new Runnable() {
             private List<Event> observerEventList = theEventList;
             private Map<String,CalenderPlugginInterface> observerPlugginList = theActivePlugginList;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
             @Override
             public void run() {
                 for(Event theEvent : observerEventList){
                     if(theEvent.isAllDay()){
+                        if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter))){
 
+                            Message theMessage = new Message(theEvent);
+                            for(CalenderPlugginInterface thePlugginInstace : observerPlugginList.values()){
+
+                                thePlugginInstace.notify(theMessage);
+                            }
+                        }
                     }else{
-//                         System.out.println(theEvent.getStartTime().format(formatter) +"       "+ LocalTime.now().format(formatter));
+
                         if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter))){
 
                             Message theMessage = new Message(theEvent);

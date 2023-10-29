@@ -5,6 +5,7 @@
 plugins {
     id 'calenderapp.java-application-conventions'
     id 'com.intershop.gradle.javacc' version '4.0.1'
+    id 'pmd'
 }
 
 dependencies {
@@ -20,6 +21,14 @@ application {
     // Define the main class for the application.
     mainClass = 'calenderapp.app.App'
 
+}
+
+pmd {
+    consoleOutput = true
+    toolVersion = '6.55.0'
+    rulesMinimumPriority = 5
+    ruleSets = []
+    ruleSetFiles = files('saed-pmd-rules.xml')
 }
 
 run {

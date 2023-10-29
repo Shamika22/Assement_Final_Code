@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api project(':list')
+
     implementation 'org.fusesource.jansi:jansi:2.4.0'
     implementation 'org.apache.commons:commons-text:1.10.0'
 

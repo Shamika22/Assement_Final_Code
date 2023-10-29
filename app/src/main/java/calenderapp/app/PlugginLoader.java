@@ -2,20 +2,13 @@ package calenderapp.app;
 
 import calenderapp.api.CalenderAppAPI;
 import calenderapp.api.CalenderPlugginInterface;
-import calenderapp.utilities.CreateRepeatEvents;
 import calenderapp.utilities.Event;
 import calenderapp.utilities.ParseObject;
 import calenderapp.utilities.PlugginParser;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +21,7 @@ public class PlugginLoader {
     private Map<String , CalenderPlugginInterface> theActivePluginList = new HashMap<>();
 
 
-
+    @SuppressWarnings("PMD.CloseResource")  // I am getting warning here due to the file readers and I have clsoed the file readers safery as soon as the file is fully finished reading
     public boolean getEvents(String fileName) {
         Boolean readingState = true;
         try {
@@ -42,8 +35,6 @@ public class PlugginLoader {
                     reader = new FileReader(file, StandardCharsets.UTF_8);
                 } else if (fileName.contains("utf16")) {
                     reader = new FileReader(file, StandardCharsets.UTF_16);
-                } else {
-//                32 is not supported in my version
                 }
 
 
@@ -52,14 +43,18 @@ public class PlugginLoader {
                 ParseObject theParsedObjectList = theParser.parse("input.txt");
                 theMainEventlist = theParsedObjectList.getEventList();
                 thePlugginObjList = theParsedObjectList.getPlugginList();
+
+                reader.close();
+
             }else{
                 readingState = false;
             }
 
 
-        } catch (Exception e) {
-            System.out.println(e);
+        } catch (IOException | ParseException e){
+            System.out.println("Encorder error" +e);
         }
+
 
 
         return readingState;
@@ -105,9 +100,11 @@ public class PlugginLoader {
             }
 
 
-        } catch (Exception e) {
-//            TODO:The exeption need to be defined not generic
-            throw new RuntimeException(e);
+        }
+        catch (NoSuchMethodException | ClassNotFoundException e){
+            System.out.println("Reflection error"+e);
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            System.out.println("Runtime error"+e);
         }
 
     }
