@@ -8,7 +8,7 @@ public class Event {
     private LocalTime startTime;
     private LocalDate startDate;
 
-    private int duration;
+    private int duration = 0;
 
     private boolean allDay;
     private int repeat;

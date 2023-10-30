@@ -10,8 +10,8 @@ plugin calenderapp.repeat.Repeat
 
 }
 event 2023-10-31 08:30:45 45 "Meeting 2"
-event 2023-10-29 01:36:45 45 "TriggeredOne"
-event 2023-10-29 01:36:45 45 "TriggeredTwo"
+event 2023-10-30 19:59:45 45 "TriggeredOne"
+event 2023-10-31 19:59:45 45 "TriggeredTwo"
 event 2023-10-25 all-day "Christmas Day"
 event 2023-11-02 all-day "Poya Day"
 plugin calenderapp.repeat.Repeat
@@ -28,11 +28,11 @@ event 2023-10-29 13:45:45 45 "Meeting 12"
 event 2023-10-29 13:45:45 45 "Meeting 13"
 plugin calenderapp.notify.Notify
 {
-    text:"Meeting 11",
+    text:"TriggeredOne",
 }
 plugin calenderapp.notify.Notify
 {
-    text:"Meeting 12",
+    text:"TriggeredTwo",
 }
 plugin calenderapp.notify.Notify
 {

@@ -11,12 +11,11 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.List;
 import java.util.Map;
 
 public class Repeat implements CalenderPlugginInterface {
-    CalenderAppAPI theAPI;
-    List<Event> theRepeatEventList = new ArrayList<>();
+    private CalenderAppAPI theAPI;
+    private List<Event> theRepeatEventList = new ArrayList<>();
 
     public void makeEvents(Map<String, String>argumentMap) {
 //        TODO:All dat but repetive events are not handled yet
@@ -37,12 +36,9 @@ public class Repeat implements CalenderPlugginInterface {
                     theCurrentDate = theCurrentDate.plusDays(Integer.parseInt(argumentMap.get("repeat")));
                 }
 
-            }catch (DateTimeParseException e){
-                System.out.println(" *****WARNINGE***** Error while loading the repeat pluggin data the error is" + e);
-            }catch (Exception e){
+            }catch (DateTimeParseException | NumberFormatException e){
                 System.out.println(" *****WARNINGE***** Error while loading the repeat pluggin data the error is" + e);
             }
-
 
 
         } else if(argumentMap.containsKey("title") && argumentMap.containsKey("startDate") &&  argumentMap.containsKey("repeat") ){
@@ -64,7 +60,7 @@ public class Repeat implements CalenderPlugginInterface {
 
             }catch (DateTimeParseException e){
                 System.out.println(" *****WARNINGE***** Error while loading the repeat pluggin data the error is" + e);
-            }catch (Exception e){
+            }catch (NumberFormatException e){
                 System.out.println(" *****WARNINGE*****  Error while loading the repeat pluggin data the error is" + e);
             }
 

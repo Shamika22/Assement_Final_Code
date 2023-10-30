@@ -124,7 +124,7 @@ public class App {
             public void run() {
                 for(Event theEvent : observerEventList){
                     if(theEvent.isAllDay()){
-                        if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter))){
+                        if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter)) && theEvent.getStartDate().equals(LocalDate.now())){
 
                             Message theMessage = new Message(theEvent);
                             for(CalenderPlugginInterface thePlugginInstace : observerPlugginList.values()){
@@ -134,7 +134,7 @@ public class App {
                         }
                     }else{
 
-                        if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter))){
+                        if(theEvent.getStartTime().format(formatter).equals(LocalTime.now().format(formatter)) && theEvent.getStartDate().equals(LocalDate.now())){
 
                             Message theMessage = new Message(theEvent);
                             for(CalenderPlugginInterface thePlugginInstace : observerPlugginList.values()){
@@ -351,7 +351,13 @@ public class App {
         for(EventPrintObject theEventPrintObj : theEventList){
             int theXVal = theEventPrintObj.getxVal();
             int theYVal = theEventPrintObj.getyVal();
-            messages[theXVal][theYVal] = messages[theXVal][theYVal] +"|"+ theEventPrintObj.getTheEvent().getTitle();
+            String durationVal = " ";
+
+            if(theEventPrintObj.getTheEvent().getDuration() != 0){
+                durationVal = String.valueOf(theEventPrintObj.getTheEvent().getDuration());
+            }
+
+            messages[theXVal][theYVal] = messages[theXVal][theYVal] +"|"+ theEventPrintObj.getTheEvent().getTitle() + "-" +durationVal + "min" ;
         }
 
 

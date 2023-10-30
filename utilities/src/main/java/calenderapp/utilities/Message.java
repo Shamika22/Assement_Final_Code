@@ -1,7 +1,7 @@
 package calenderapp.utilities;
 
 public class Message {
-   Event theStartEvent;
+   private Event theStartEvent;
 
     public Message(Event theStartEvent) {
         this.theStartEvent = theStartEvent;

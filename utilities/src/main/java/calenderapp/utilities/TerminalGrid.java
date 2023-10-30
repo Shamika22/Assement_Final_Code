@@ -11,6 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+@SuppressWarnings({"PMD.CommentDefaultAccessModifier","PMD.UnusedAssignment"})
+/*
+* There were few PMD warnings that were generated from this file and since this was given to us from blackeboad and there was a specific mesion that we can suppress warnings from the terminal grid file I suppresed the warnings
+* */
 public class TerminalGrid {
     static
     {
