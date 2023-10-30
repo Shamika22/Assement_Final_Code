@@ -53,6 +53,8 @@ public class PlugginLoader {
 
         } catch (IOException | ParseException e){
             System.out.println("Encorder error" +e);
+            System.out.println("The input file does not match with the prgamme supported grammer please recheck the input file ");
+            readingState = false;
         }
 
 

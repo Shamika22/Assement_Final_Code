@@ -102,7 +102,7 @@ public class App {
                 } while (!quiteMain);
 
             }else{
-                System.out.println(" *********WARNING********* No such file in the resource directory of the main sub project app");
+                System.out.println(" *********WARNING********* No such file in the resource directory or improperly formatted input file");
             }
 
 
@@ -176,63 +176,63 @@ public class App {
                         selectedTime = selectedTime.plusDays(1);
 
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale ,  theSetBundle);
+                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale ,  theSetBundle);
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+w": {
                         selectedTime = selectedTime.plusWeeks(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
+                        printCalender(selectedTime  , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+m": {
                         selectedTime = selectedTime.plusMonths(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
+                        printCalender(selectedTime  , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "+y": {
                         selectedTime = selectedTime.plusYears(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
+                        printCalender(selectedTime  , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-d": {
                         selectedTime = selectedTime.minusDays(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
+                        printCalender(selectedTime  , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-w": {
                         selectedTime = selectedTime.minusWeeks(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
+                        printCalender(selectedTime  , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle);
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-m": {
                         selectedTime = selectedTime.minusMonths(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
+                        printCalender(selectedTime  , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row , theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "-y": {
                         selectedTime = selectedTime.minusYears(1);
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale , theSetBundle );
+                        printCalender(selectedTime , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row ,theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
                     case "t": {
                         selectedTime = LocalDateTime.now();
 
-                        printCalender(LocalDateTime.now() , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row, theSetLocale , theSetBundle );
+                        printCalender(selectedTime  , filterWeeklyEvents(selectedTime.toLocalDate() , theEventList , row) , column , row, theSetLocale , theSetBundle );
                         printCalenderMenue(theSetBundle);
                         break;
                     }
@@ -278,7 +278,7 @@ public class App {
                         break;
                     }
                     default: {
-
+                        theSetBundle.getString("NotAValidOption");
                         break;
                     }
                 }
@@ -302,7 +302,7 @@ public class App {
 
         for(Event theEvent : theEventList){
             if((theEvent.getStartDate().isEqual(ChronoLocalDate.from(theRefDate)) || theEvent.getStartDate().isBefore(ChronoLocalDate.from(theEndDate))||theEvent.getStartDate().isAfter(ChronoLocalDate.from(theRefDate)) ) && (theEvent.getTitle().equals(seachTerm))){
-                System.out.println("A match found");
+
                 theSelectedEvent = theEvent;
                 break;
             }

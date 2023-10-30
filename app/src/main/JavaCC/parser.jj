@@ -71,19 +71,9 @@ void parserController() :
 {
 }
 {
-    (event() | hello() | plugin())* <EOF>
+    (event() | plugin())* <EOF>
 }
 
-void hello():
-{
-}
-{
-    <HELLO> <WORLD>
-    {
-        System.out.println("Successful parse! The input is a valid 'hello world' statement.");
-
-    }
-}
 
 void plugin():
 {
